@@ -47,7 +47,11 @@ fun SignInScreen(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
             is SignInState.Success -> {
-                navController.navigate(NavigationItems.Home)
+                navController.navigate(NavigationItems.Home){
+                    popUpTo(NavigationItems.SignIn){
+                        inclusive = true
+                    }
+                }
             }
 
             is SignInState.Error -> {
