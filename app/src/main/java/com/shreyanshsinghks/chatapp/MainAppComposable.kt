@@ -8,9 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.shreyanshsinghks.chatapp.feature.auth.singin.SignInScreen
-import com.shreyanshsinghks.chatapp.feature.auth.singup.SignUpScreen
-import com.shreyanshsinghks.chatapp.feature.home.HomeScreen
+import com.shreyanshsinghks.chatapp.presentation.auth.singin.SignInScreen
+import com.shreyanshsinghks.chatapp.presentation.auth.singup.SignUpScreen
+import com.shreyanshsinghks.chatapp.presentation.home.HomeScreen
 import com.shreyanshsinghks.chatapp.navigation.NavigationItems
 
 @Composable

@@ -1,4 +1,4 @@
-package com.shreyanshsinghks.chatapp.feature.auth.singin
+package com.shreyanshsinghks.chatapp.presentation.auth.singup
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -37,32 +37,37 @@ import com.shreyanshsinghks.chatapp.R
 import com.shreyanshsinghks.chatapp.navigation.NavigationItems
 
 @Composable
-fun SignInScreen(navController: NavController) {
-    val viewModel: SignInViewModel = hiltViewModel()
+fun SignUpScreen(navController: NavController) {
+    val viewModel: SignUpViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf("") }
     val context = LocalContext.current
-
     LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
-            is SignInState.Success -> {
+            is SignUpState.Success -> {
                 navController.navigate(NavigationItems.Home){
-                    popUpTo(NavigationItems.SignIn){
+                    popUpTo(NavigationItems.SignUp){
                         inclusive = true
                     }
                 }
             }
 
-            is SignInState.Error -> {
+            is SignUpState.Error -> {
+                name = ""
                 email = ""
                 password = ""
-                Toast.makeText(context, "Invalid Credentials", Toast.LENGTH_SHORT).show()
+                confirmPassword = ""
+                Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
 
             else -> {}
         }
     }
+
+
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         Column(
@@ -81,6 +86,12 @@ fun SignInScreen(navController: NavController) {
                     .background(Color.White)
             )
             OutlinedTextField(
+                value = name, onValueChange = { name = it },
+                placeholder = { Text(text = "Name") },
+                label = { Text(text = "Name") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
                 value = email, onValueChange = { email = it },
                 placeholder = { Text(text = "Email") },
                 label = { Text(text = "Email") },
@@ -93,24 +104,33 @@ fun SignInScreen(navController: NavController) {
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation()
             )
+            OutlinedTextField(
+                value = confirmPassword, onValueChange = { confirmPassword = it },
+                placeholder = { Text(text = "Confirm Password") },
+                label = { Text(text = "Confirm Password") },
+                modifier = Modifier.fillMaxWidth(),
+                visualTransformation = PasswordVisualTransformation(),
+                isError = password.isNotEmpty() && confirmPassword.isNotEmpty() && password != confirmPassword
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            if (uiState.value == SignInState.Loading) {
+
+            if (uiState.value == SignUpState.Loading) {
                 CircularProgressIndicator()
             } else {
+
                 Button(
-                    onClick = { viewModel.signIn(email, password) },
+                    onClick = { viewModel.signUp(name, email, password) },
                     modifier = Modifier.fillMaxWidth(),
-                    enabled = email.isNotEmpty() && password.isNotEmpty() && uiState.value == SignInState.Nothing || uiState.value == SignInState.Error
+                    enabled = name.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() && password == confirmPassword && uiState.value == SignUpState.Nothing || uiState.value == SignUpState.Error
                 ) {
-                    Text(text = "Sign In")
+                    Text(text = "Sign Up")
                 }
 
-                TextButton(onClick = { navController.navigate(NavigationItems.SignUp) }) {
-                    Text(text = "Don't have an account? Sign Up")
+                TextButton(onClick = { navController.navigateUp() }) {
+                    Text(text = "Already have an account? Sign In")
                 }
             }
 
         }
     }
 }
-

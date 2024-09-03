@@ -1,4 +1,4 @@
-package com.shreyanshsinghks.chatapp.feature.auth.singup
+package com.shreyanshsinghks.chatapp.presentation.auth.singup
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
