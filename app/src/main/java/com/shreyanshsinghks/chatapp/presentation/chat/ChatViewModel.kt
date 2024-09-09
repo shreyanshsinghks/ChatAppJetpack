@@ -1,17 +1,17 @@
 package com.shreyanshsinghks.chatapp.presentation.chat
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
-import com.shreyanshsinghks.chatapp.model.Channel
 import com.shreyanshsinghks.chatapp.model.MessageModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,6 +19,19 @@ class ChatViewModel @Inject constructor() : ViewModel() {
     private val _messages = MutableStateFlow<List<MessageModel>>(emptyList())
     val messages = _messages.asStateFlow()
     private val db = Firebase.database
+
+    fun sendMessage(channelId: String, messageText: String) {
+        val message = MessageModel(
+            id = db.reference.push().key ?: UUID.randomUUID().toString(),
+            senderId = Firebase.auth.currentUser?.uid ?: "",
+            message = messageText,
+            createdAt = System.currentTimeMillis(),
+            senderName = Firebase.auth.currentUser?.displayName ?: "",
+            senderImage = Firebase.auth.currentUser?.photoUrl.toString(),
+            imageUrl = null
+        )
+        db.reference.child("messages").child(channelId).push().setValue(message)
+    }
 
     fun listenForMessages(channelId: String) {
         db.getReference("messages").child(channelId).orderByChild("createdAt")
@@ -35,7 +48,8 @@ class ChatViewModel @Inject constructor() : ViewModel() {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                    // Handle error
+
                 }
             })
     }

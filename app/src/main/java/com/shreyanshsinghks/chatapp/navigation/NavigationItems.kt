@@ -2,14 +2,15 @@ package com.shreyanshsinghks.chatapp.navigation
 
 import kotlinx.serialization.Serializable
 
-@Serializable
-sealed class NavigationItems(val route: String) {
-    @Serializable
-    data object Home : NavigationItems("home")
 
     @Serializable
-    data object SignIn : NavigationItems("signIn")
+    object Home
 
     @Serializable
-    data object SignUp : NavigationItems("signUp")
-}
+    object SignIn
+
+    @Serializable
+    object SignUp
+
+    @Serializable
+    data class Chat(val channelId: String?)

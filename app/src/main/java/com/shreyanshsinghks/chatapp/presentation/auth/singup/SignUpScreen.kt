@@ -34,7 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.shreyanshsinghks.chatapp.R
-import com.shreyanshsinghks.chatapp.navigation.NavigationItems
+import com.shreyanshsinghks.chatapp.navigation.Home
+import com.shreyanshsinghks.chatapp.navigation.SignUp
 
 @Composable
 fun SignUpScreen(navController: NavController) {
@@ -48,8 +49,8 @@ fun SignUpScreen(navController: NavController) {
     LaunchedEffect(key1 = uiState.value) {
         when (uiState.value) {
             is SignUpState.Success -> {
-                navController.navigate(NavigationItems.Home){
-                    popUpTo(NavigationItems.SignUp){
+                navController.navigate(Home){
+                    popUpTo(SignUp){
                         inclusive = true
                     }
                 }

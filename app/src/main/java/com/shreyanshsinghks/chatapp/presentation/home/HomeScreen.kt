@@ -13,12 +13,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.DarkGray
+import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.shreyanshsinghks.chatapp.navigation.Chat
+import com.shreyanshsinghks.chatapp.ui.theme.DarkGrey
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +68,8 @@ fun HomeScreen(navController: NavController) {
                     color = Color.White
                 )
             }
-        }
+        },
+        containerColor = Color.Black
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -65,6 +77,42 @@ fun HomeScreen(navController: NavController) {
                 .padding(innerPadding)
         ) {
             LazyColumn {
+                item {
+                    Text(
+                        text = "Messages",
+                        color = Color.Gray,
+                        style = TextStyle(fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                item {
+                    TextField(
+                        value = "",
+                        onValueChange = {},
+                        placeholder = { Text("Search........") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(DarkGrey),
+                        colors = TextFieldDefaults.colors()
+                            .copy(
+                                focusedTextColor = Gray,
+                                unfocusedTextColor = Gray,
+                                unfocusedContainerColor = DarkGrey,
+                                focusedContainerColor = DarkGrey,
+                                focusedPlaceholderColor = Gray,
+                                unfocusedPlaceholderColor = Gray,
+                                focusedIndicatorColor = Gray
+                            ),
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
                 items(channels.value) { channel ->
                     Column {
                         Text(text = channel.name,
@@ -74,7 +122,7 @@ fun HomeScreen(navController: NavController) {
                                 .clip(RoundedCornerShape(16.dp))
                                 .background(Color.Red.copy(alpha = 0.3f))
                                 .clickable {
-//                                    navController.navigate()
+                                    navController.navigate(Chat(channelId = channel.id))
                                 }
                                 .padding(16.dp)
 
@@ -84,7 +132,7 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
-    if(addChannel.value){
+    if (addChannel.value) {
         ModalBottomSheet(onDismissRequest = {}, sheetState = sheetState) {
             AddChannelDialog {
                 viewModel.addChannel(it)
