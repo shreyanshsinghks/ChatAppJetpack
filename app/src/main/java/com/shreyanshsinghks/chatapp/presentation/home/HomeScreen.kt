@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -31,10 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.DarkGray
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Color.Companion.Yellow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -115,18 +120,9 @@ fun HomeScreen(navController: NavController) {
                 }
                 items(channels.value) { channel ->
                     Column {
-                        Text(text = channel.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.Red.copy(alpha = 0.3f))
-                                .clickable {
-                                    navController.navigate(Chat(channelId = channel.id))
-                                }
-                                .padding(16.dp)
-
-                        )
+                        ChannelItem(channelName = channel.name) {
+                            navController.navigate(Chat(channelId = channel.id))
+                        }
                     }
                 }
             }
@@ -139,6 +135,41 @@ fun HomeScreen(navController: NavController) {
                 addChannel.value = false
             }
         }
+    }
+}
+
+@Composable
+fun ChannelItem(channelName: String, onClick: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 2.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(DarkGrey)
+            .clickable {
+                onClick.invoke()
+            }
+            ,
+        verticalAlignment = Alignment.CenterVertically,
+
+        ) {
+        Box(
+            modifier = Modifier
+                .padding(8.dp)
+                .size(70.dp)
+                .clip(CircleShape)
+                .background(Yellow.copy(alpha = 0.3f)),
+        ) {
+            Text(
+                text = channelName[0].uppercaseChar().toString(),
+                color = White,
+                style = TextStyle(fontSize = 35.sp),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
+            )
+        }
+
+        Text(channelName, modifier = Modifier.padding(8.dp), color = White)
     }
 }
 
@@ -159,4 +190,10 @@ fun AddChannelDialog(onAddChannel: (String) -> Unit) {
             Text("Add")
         }
     }
+}
+
+@Preview
+@Composable
+private fun PreviewItem() {
+    ChannelItem(channelName = "Test Channel") { }
 }
