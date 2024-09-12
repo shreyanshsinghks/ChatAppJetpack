@@ -39,7 +39,8 @@ fun MainAppComposable() {
                 val arguments = backStackEntry.toRoute<Chat>()
                 ChatScreen(
                     navController = navController,
-                    channelId = arguments.channelId ?: "No Channel Id"
+                    channelId = arguments.channelId ?: "No Channel Id",
+                    channelName = arguments.channelName ?: "No Channel Name"
                 )
             }
 

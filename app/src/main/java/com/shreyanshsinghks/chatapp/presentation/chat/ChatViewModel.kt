@@ -1,5 +1,6 @@
 package com.shreyanshsinghks.chatapp.presentation.chat
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -7,6 +8,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
+import com.google.firebase.storage.storage
 import com.shreyanshsinghks.chatapp.model.MessageModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
     val messages = _messages.asStateFlow()
     private val db = Firebase.database
 
-    fun sendMessage(channelId: String, messageText: String) {
+    fun sendMessage(channelId: String, messageText: String?, imageUrl: String? = null) {
         val message = MessageModel(
             id = db.reference.push().key ?: UUID.randomUUID().toString(),
             senderId = Firebase.auth.currentUser?.uid ?: "",
@@ -28,7 +30,7 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             createdAt = System.currentTimeMillis(),
             senderName = Firebase.auth.currentUser?.displayName ?: "",
             senderImage = Firebase.auth.currentUser?.photoUrl.toString(),
-            imageUrl = null
+            imageUrl = imageUrl
         )
         db.reference.child("messages").child(channelId).push().setValue(message)
     }
@@ -54,4 +56,12 @@ class ChatViewModel @Inject constructor() : ViewModel() {
             })
     }
 
+    fun sendImageMessage(uri: Uri, channelId: String) {
+        val storageRef = Firebase.storage.reference.child("images/${UUID.randomUUID()}")
+        storageRef.putFile(uri).addOnSuccessListener {
+            storageRef.downloadUrl.addOnSuccessListener { url ->
+                sendMessage(channelId, "", url.toString())
+            }
+        }
+    }
 }

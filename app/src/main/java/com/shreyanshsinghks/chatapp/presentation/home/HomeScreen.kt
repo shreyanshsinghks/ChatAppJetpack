@@ -121,7 +121,12 @@ fun HomeScreen(navController: NavController) {
                 items(channels.value) { channel ->
                     Column {
                         ChannelItem(channelName = channel.name) {
-                            navController.navigate(Chat(channelId = channel.id))
+                            navController.navigate(
+                                Chat(
+                                    channelId = channel.id,
+                                    channelName = channel.name
+                                )
+                            )
                         }
                     }
                 }
@@ -148,8 +153,7 @@ fun ChannelItem(channelName: String, onClick: () -> Unit) {
             .background(DarkGrey)
             .clickable {
                 onClick.invoke()
-            }
-            ,
+            },
         verticalAlignment = Alignment.CenterVertically,
 
         ) {

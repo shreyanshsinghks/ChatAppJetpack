@@ -13,4 +13,4 @@ import kotlinx.serialization.Serializable
     object SignUp
 
     @Serializable
-    data class Chat(val channelId: String?)
+    data class Chat(val channelId: String?, val channelName: String?)
